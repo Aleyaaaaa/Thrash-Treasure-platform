@@ -1,0 +1,11 @@
+[
+    {
+        "id": 1,
+        "username": "Ahmad",
+        "email": "ahmad@gmail.com",
+        "password": "password",
+        "rating": 5,
+        "phone": "012-345 6789",
+        "profile_pic": "/static/images/seller1.jpg"
+    }
+]

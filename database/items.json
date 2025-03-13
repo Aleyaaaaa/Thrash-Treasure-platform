@@ -1,0 +1,20 @@
+[
+    {
+        "id": 2,
+        "seller_id": 1,
+        "image": "/static/images/almari.jpeg",
+        "name": "Ikea Wardrobe",
+        "price": "RM 250.00",
+        "description": "Spacious and sturdy wardrobe for your clothes.",
+        "status": "approved"
+    },
+    {
+        "id": 3,
+        "seller_id": 1,
+        "image": "/static/images/kasut.jpg",
+        "name": "NB Shoes",
+        "price": "RM 300.00",
+        "description": "Comfortable and durable shoes for everyday use.",
+        "status": "approved"
+    }
+]

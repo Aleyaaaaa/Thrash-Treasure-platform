@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            font-family: 'Kadwa', sans-serif;
+            background: #FAF1CF;
+            text-align: center;
+        }
+
+         /* NAVBAR */
+.navbar {
+    width: 100%;
+    background: #3F6844;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar a {
+    margin: 0 15px;
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    color: white;
+}
+
+.settings-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.settings-icon {
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background-color: #3F6844;
+    padding: 10px;
+    width: 120px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.dropdown .signout-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 0;
+    width: 100%;
+}
+
+.dropdown .signout-button:hover {
+    color: white;
+}
+
+.settings-container:hover .dropdown {
+    display: block;
+}
+
+        /* Content */
+        .container {
+            margin-top: 100px; /* Prevent overlap with navbar */
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: black;
+            text-transform: uppercase; /* Make title uppercase */
+        }
+
+        /* Item Image */
+        .item-image {
+            width: 371px;
+            height: 290px;
+            border-radius: 15px;
+            border: 2px solid black;
+            margin: 20px 0;
+        }
+
+        /* Item Info */
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0px; /* Further reduced gap for name/price */
+            font-size: 20px;
+            font-weight: 700;
+            color: black;
+            text-transform: uppercase;  /* Make item name and price uppercase */
+        }
+
+        /* Description Box */
+        .desc-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: black;
+            margin-top: 10px;
+            text-transform: uppercase; /* Make description title uppercase */
+        }
+
+        /* Description Box */
+         .message {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .desc-box {
+            background: #5DAA68;
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 800px;
+            margin: 10px auto;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            text-transform: uppercase; /*make button wording uppercase*/
+        }
+
+        .btn {
+            width: 136px;
+            height: 45px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            background: #3F6844;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase; /* Make button text uppercase */
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+
+
+    <div class="navbar">
+        <a href="{{ url_for('buyer_dashboard') }}">HOME</a>
+        <a href="{{ url_for('buyer_cart') }}">CART</a>
+          <a href="{{ url_for('buyer_reviews') }}">REVIEWS</a>
+    </div>
+
+<!-- Content -->
+<div class="container">
+    <h1 class="title">ITEM DETAILS</h1>
+
+    <!-- Item Image -->
+    <img class="item-image" src="{{ item.image }}" alt="{{ item.name }}">
+
+    <!-- Item Info -->
+    <div class="item-info">
+        <h2 class="item-name">{{ item.name }}</h2>
+        <h2 class="item-price">{{ item.price }}</h2>
+    </div>
+
+    <!-- Item Description -->
+    <h2 class="desc-title">ITEM DESCRIPTION:</h2>
+    <div class="desc-box">
+        <p class="desc-text">{{ item.description }}</p>
+    </div>
+    <p id="message" class="message"></p>
+    <!-- Buttons -->
+    <div class="button-group">
+        <a href="{{ url_for('buyer_dashboard') }}"><button class="btn">BACK</button></a>
+            <button class="btn" id="add-to-cart-btn">ADD TO CART</button> <!--Change element tag to button-->
+    </div>
+</div>
+ <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const addToCartBtn = document.getElementById('add-to-cart-btn');  //Change ID to button id from line 107
+            const item_id_pass =  '{{ item.id }}'; //Load Item ID
+
+            addToCartBtn.addEventListener('click', async function(e) { //Add Event Listener on button from line 107
+               console.log('add to cart clicked' + item_id_pass);
+                try {
+
+                    const response = await fetch(`/add_to_cart/${item_id_pass}`, {
+                        method: 'POST',
+                    });
+
+                    if (!response.ok) {
+                        alert('Failed to add item. Please try again!'); //Show failed prompt
+                        return;
+                    }
+                      document.getElementById('message').textContent = "Item added to cart!"; // This will prevent default form submission as it has been added in Javascript
+                 } catch (error) {
+                    console.error('error' , error)
+                    alert('Failed to add item due to Error'); //Show Error Message
+                    return;
+                }
+        
+            });
+        });
+    </script>
+</body>
+</html>

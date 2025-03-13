@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Kadwa', sans-serif;
+            background: #FAF1CF;
+            text-align: center;
+            color: #333;
+        }
+
+         /* NAVBAR */
+        .navbar {
+            width: 100%;
+            background: #3F6844;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 0 20px; /* Keep the padding */
+            box-sizing: border-box; /* Important: Include padding in width calculation */
+        }
+
+        .navbar-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar a {
+            margin: 0 15px;
+            color: white;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            color: white;
+        }
+
+        .settings-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .settings-icon {
+            color: white;
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            background-color: #3F6844;
+            padding: 10px;
+            width: 120px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .dropdown .signout-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 0;
+            width: 100%;
+        }
+
+        .dropdown .signout-button:hover {
+            color: white;
+        }
+
+        .settings-container:hover .dropdown {
+            display: block;
+        }
+
+        /* Container for the Main Content */
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1200px;
+            margin: 80px auto;
+            background: #FAF1CF;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: black;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Order Table Styles - Refined */
+        .item-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .item-table th,
+        .item-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Headers */
+        .item-table th {
+            background-color: #3F6844;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center; /* Center the text */
+        }
+
+        /* Center the table data */
+        .item-table td {
+            text-align: center;
+        }
+
+        /* Hover effect on rows */
+        .item-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Odd row color */
+        .item-table tbody tr:nth-child(odd) {
+            background-color: #5DAA68;
+        }
+
+        /* Responsive adjustments for table */
+        @media (max-width: 768px) {
+            .item-table {
+                border: 0;
+            }
+
+            .item-table thead {
+                display: none;
+            }
+
+            .item-table tr {
+                margin-bottom: 10px;
+                display: block;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .item-table td {
+                display: block;
+                text-align: right;
+                font-size: 0.9em;
+                border-bottom: 1px dotted #ccc;
+            }
+
+            .item-table td:last-child {
+                border-bottom: 0;
+            }
+
+            .item-table td::before {
+                content: attr(data-label);
+                float: left;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+        }
+
+        /* Style for the image */
+         .item-table img {
+            max-width: 80px;  /* Adjust this value as needed */
+            height: auto;
+            display: block;
+            margin: auto;   /* Center the image in the cell */
+            border-radius: 5px; /*Optional for rounded corners */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);  /* Optional shadow */
+        }
+
+        /* Button Styling */
+        .order-button {
+            background-color: #FFD700;
+            border: none;
+            color: #3F6844;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 2px 4px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-button:hover {
+            background-color: #F0C808;
+        }
+
+        /* General Style for disabled elements */
+        .disabled {
+            pointer-events: none; /* Make unclickable */
+            opacity: 0.6; /* Visually indicate disabled */
+        }
+
+        /* Style for disabled elements */
+        .disabled-text {
+            font-style: italic;
+            color: grey;
+        }
+
+        /* Style adjustments for ratings and reviews */
+        .rating {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 2em;
+            color: #fff; /* Make default star color white */
+            cursor: pointer;
+            transition: color 0.3s;
+            padding: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* add some shadow so it can be seen */
+        }
+
+        /* Star Hover and Checked States */
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #ffc107; /* Make hover and checked color yellow */
+        }
+
+        /* Seller response style */
+        .seller-response p {
+            font-weight: lighter;
+        }
+
+        /* Responsive Adjustments for action button */
+        .action-buttons {
+            display: flex;
+            justify-content: center; /* Center the buttons */
+            gap: 10px; /* Space them out */
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function validateAndSubmit(itemId) {
+            var rating = document.querySelector("input[name='rating-" + itemId + "']:checked");
+            if (rating) {
+                document.getElementById('reviewForm-' + itemId).submit();
+            } else {
+                alert('Please select a rating');
+            }
+        }
+
+        function confirmSignOut() {
+            return confirm("Are you sure you want to sign out?");
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Navbar will display using following implementation and styling when present for correct scope in form-->
+    <div class="navbar">
+        <div class="navbar-links">
+            <a href="{{ url_for('buyer_dashboard') }}">HOME</a>
+            <a href="{{ url_for('buyer_cart') }}">CART</a>
+            <a href="{{ url_for('buyer_reviews') }}">REVIEWS</a>
+            <a href="{{ url_for('buyer_status') }}">STATUS</a>
+        </div>
+    </div>
+    <!-- Flash message will display using following implementation and styling when present for correct scope in form -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="hint {% if category=='error' %}error-message{% else %}success-message{% endif %}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- Content Area -->
+    <div class="container">
+        <h1>My Reviews</h1>
+
+        <table class="item-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Item Name</th>
+                    <th>Status</th>
+                    <th>Feedback</th>
+                    <th>Rating</th>
+                    <th>Replies</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in completed_orders %}
+                <tr>
+                    <td data-label="Image">
+                         <img src="{{ order.image }}" alt="{{ order.name }}" > <!-- Apply the style -->
+                    </td>
+                    <td data-label="Item Name">{{ order.name }}</td>
+                    <td data-label="Status">{{ order.status }}</td>
+                    {% if order.rating > 0 %}
+                    <td data-label="Feedback">{{ order.review_text }}</td>
+                    <td data-label="Rating">{{ order.rating }} stars</td>
+                    <td data-label="Replies">
+                        {{ order.replies }}  <!-- Display the reply -->
+                    </td>
+                    <td data-label="Actions">
+                        <span class="disabled-text">You have already reviewed this item.</span>
+                    </td>
+                    {% else %}
+                    <form id="reviewForm-{{ order.id }}" action="{{ url_for('submit_review', item_id=order.id) }}" method="POST">
+                        <td data-label="Feedback">
+                            <label for="feedback-{{ order.id }}">Feedback:</label>
+                            <textarea id="feedback-{{ order.id }}" name="feedback" rows="4" cols="30"></textarea>
+                        </td>
+                        <td data-label="Rating">
+                            <div class="rating">
+                                <input type="radio" id="star5-{{ order.id }}" name="rating-{{ order.id }}" value="5" /><label for="star5-{{ order.id }}" title="5 stars">★</label>
+                                <input type="radio" id="star4-{{ order.id }}" name="rating-{{ order.id }}" value="4" /><label for="star4-{{ order.id }}" title="4 stars">★</label>
+                                <input type="radio" id="star3-{{ order.id }}" name="rating-{{ order.id }}" value="3" /><label for="star3-{{ order.id }}" title="3 stars">★</label>
+                                <input type="radio" id="star2-{{ order.id }}" name="rating-{{ order.id }}" value="2" /><label for="star2-{{ order.id }}" title="2 stars">★</label>
+                                <input type="radio" id="star1-{{ order.id }}" name="rating-{{ order.id }}" value="1" /><label for="star1-{{ order.id }}" title="1 star">★</label>
+                            </div>
+                        </td>
+                        <td data-label="Replies">No response yet.</td>
+                        <td data-label="Actions">
+                           <div class="action-buttons">
+                                <button type="button" class="order-button" onclick="validateAndSubmit('{{ order.id }}')">Submit Review</button>
+                           </div>
+                        </td>
+                </tr>
+                </form>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

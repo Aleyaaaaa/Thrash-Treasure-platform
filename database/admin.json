@@ -1,0 +1,9 @@
+[
+    {
+        "id": 1,
+        "username": "admin01",
+        "email": "admin@example.com",
+        "password": "adminpassword",
+        "profile_pic": "static/images/admin1.jpg"
+    }
+]
