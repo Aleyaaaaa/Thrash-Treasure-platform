@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* CSS Variables for Theme */
+        :root {
+            --background-color: #FAF1CF;
+            --navbar-color: #3F6844;
+            --navbar-text-color: #FFFDF2;
+            --container-background: white;
+            --text-color: #0B0B0B;
+            --upload-background: #D9D9D9;
+            --button-background: #3F6844;
+            --button-hover: #2f5433;
+            --error-color: red;
+            --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Global Styles */
+        body {
+            background: var(--background-color);
+            font-family: Inter, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Fixed Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--navbar-color);
+            color: var(--navbar-text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .navbar a {
+            color: var(--navbar-text-color);
+            font-size: 16px;
+            font-weight: 400;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Settings Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .settings-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--container-background);
+            box-shadow: var(--box-shadow);
+            min-width: 160px;
+            z-index: 1;
+            border-radius: 5px;
+            padding: 10px 0;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--text-color);
+            padding: 8px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Content Area */
+        .content {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 65px;
+            text-align: center;
+        }
+
+        .content h1,
+        .content p {
+            margin: auto;
+            width: fit-content;
+        }
+
+        /* Centered Container for Forms and Add Content Section */
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: var(--container-background);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        /* Upload Box */
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            width: 100%;
+            height: 150px;
+            background: var(--upload-background);
+            border: 2px dashed black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            color: black;
+        }
+
+        .upload-icon {
+            font-size: 25px;
+            margin-bottom: 5px;
+        }
+
+        #fileInput {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        #imagePreview {
+            width: auto;
+            height: 150px;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Form Fields */
+        .input-group {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: black;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 40px;
+            background: var(--upload-background);
+            border: 2px solid black;
+            font-size: 14px;
+            padding: 8px;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.5);
+            margin-top: 5px;
+        }
+
+        /* Price Section */
+        .price-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rm-label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            height: 40px;
+            background: var(--button-background);
+            border-radius: 5px;
+            border: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--button-hover);
+        }
+
+        /* Message display of error and success type*/
+        .hint.error-message {
+            color: var(--error-color);
+            text-align: center;
+        }
+
+        /* Hidden Classes */
+        .hidden {
+            display: none;
+        }
+
+        .visible {
+            display: flex;
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .navbar-links {
+                gap: 15px;
+            }
+
+            .navbar a {
+                font-size: 14px;
+            }
+
+            .content {
+                margin-top: 58px;
+                padding: 10px;
+            }
+
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .input-field {
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .upload-box {
+                height: 100px;
+            }
+
+            .upload-icon {
+                font-size: 22px;
+            }
+
+            .upload-text {
+                font-size: 12px;
+            }
+
+            #imagePreview {
+                height: 100px;
+                object-fit: contain;
+            }
+
+            .submit-btn {
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .input-label {
+                font-size: 14px;
+            }
+
+            .hint {
+                font-size: 12px;
+            }
+
+            .rm-label {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        function confirmAction(message, action, formId) {
+            if (confirm(message)) {
+                document.getElementById(formId).submit();
+            }
+        }
+
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const uploadText = document.querySelector('.upload-text');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden'); //remove to make it show
+                    uploadText.classList.add('hidden'); //add so that it does not show
+                }
+                reader.readAsDataURL(input.files[0]);
+
+            } else {
+                if ("{{ item.image }}") {
+                    preview.src = "{{ item.image }}";
+                    preview.classList.remove('hidden');
+                    uploadText.classList.add('hidden');
+                } else {
+                    preview.src = "";
+                    preview.classList.add('hidden');
+                    uploadText.classList.remove('hidden');
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Flash message will display using following implementation and styling when present for correct scope in form -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="hint {% if category=='error' %}error-message{% endif %}">{{ message|join('\n') }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-links">
+            <a href="{{ url_for('seller_dashboard', username=username) }}">HOME</a>
+            <a href="{{ url_for('seller_item', username=username) }}">ITEMS</a>
+            <a href="{{ url_for('seller_orders', username=username) }}">ORDERS</a>
+            <a href="{{ url_for('seller_reviews', username=username) }}">REVIEWS</a>
+        </div>
+
+        <!-- Settings Dropdown -->
+        <div class="dropdown">
+            <i class="fas fa-cog settings-icon"></i>
+            <div class="dropdown-content">
+                <form id="sign_out_form" method="POST" action="{{ url_for('sign_out') }}">
+                    <a href="javascript:void(0);" onclick="confirmAction('Are you sure you want to sign out?', 'sign_out', 'sign_out_form')">Sign Out</a>
+                    <input type="hidden" name="confirm_sign_out" value="yes">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <h1>Edit Item</h1>
+    </div>
+
+    <!-- main Container (which encloses form-->
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="upload-container">
+                <div class="upload-box">
+                    <i class="fas fa-camera upload-icon"></i>
+                    <div class="upload-text hidden">add your picture</div>
+                    <input type="file" name="file" accept=".jpg,.jpeg,.png" id="fileInput"
+                        onchange="previewImage(this)">
+                    <img id="imagePreview" src="{{ item.image }}" alt="Image Preview" class="hidden"
+                         style="object-fit: contain;">
+                </div>
+                <div class="hint">Your picture must be in jpg, jpeg and png format only</div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">ITEM NAME</label>
+                <input type="text" class="input-field" name="name" minlength="3" maxlength="30"
+                    value="{{ item.name }}" required>
+                <div class="hint">Must be between 3 to 30 characters.</div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">ITEM PRICE</label>
+                <div class="price-group">
+                    <span class="rm-label">RM</span>
+                    <input type="text" class="input-field" style="width: 100px;" name="price"
+                        value="{{ item.price.split(' ')[1] }}" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">ITEM DESCRIPTION</label>
+                <textarea class="input-field" style="height: 100px;" name="description" minlength="10"
+                    maxlength="100" required>{{ item.description }}</textarea>
+                <div class="hint">Must be between 10 to 100 characters.</div>
+                <div class="hint">Briefly explain your item so buyer can check the item details.</div>
+            </div>
+
+            <!-- Submit Button-->
+            <button type="submit" class="submit-btn">SUBMIT</button>
+        </form>
+    </div>
+
+    <script>
+        function confirmAction(message, action, formId) {
+            if (confirm(message)) {
+                document.getElementById(formId).submit();
+            }
+        }
+
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const uploadText = document.querySelector('.upload-text');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    uploadText.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+
+            } else {
+                if ("{{ item.image }}") {
+                    preview.src = "{{ item.image }}";
+                   preview.classList.remove('hidden');
+                    uploadText.classList.add('hidden');
+                }
+                 else {
+                    preview.src = "";
+                    preview.classList.add('hidden');
+                    uploadText.classList.remove('hidden');
+                }
+            }
+        }
+           // Initialize on page load (if there's an existing image)
+        window.onload = function() {
+             const preview = document.getElementById('imagePreview');
+            const uploadText = document.querySelector('.upload-text');
+
+             if ("{{ item.image }}") {
+                 preview.classList.remove('hidden');
+                uploadText.classList.add('hidden');
+             } else {
+                 preview.classList.add('hidden');
+               uploadText.classList.remove('hidden');
+             }
+        }
+    </script>
+
+</body>
+
+</html>

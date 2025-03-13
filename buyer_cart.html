@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Kadwa', sans-serif;
+            background: #FAF1CF;
+            text-align: center;
+        }
+
+         /* NAVBAR */
+.navbar {
+    width: 100%;
+    background: #3F6844;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 0 20px; /* Keep the padding */
+    box-sizing: border-box; /* Important: Include padding in width calculation */
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+}
+
+.navbar a {
+    margin: 0 15px;
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    color: white;
+}
+
+.settings-container {
+    position: absolute; /* Change to absolute positioning */
+    right: 20px;         /* Position on the right */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the settings icon */
+    cursor: pointer;
+}
+
+.settings-icon {
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background-color: #3F6844;
+    padding: 10px;
+    width: 120px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.dropdown .signout-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 0;
+    width: 100%;
+}
+
+.dropdown .signout-button:hover {
+    color: white;
+}
+
+.settings-container:hover .dropdown {
+    display: block;
+}
+
+        /* Page Content */
+        .container {
+            margin-top: 120px;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: black;
+        }
+
+        /* Cart Items */
+        .cart {
+            width: 80%;
+            max-width: 1056px;
+            margin: 20px auto;
+        }
+
+        /* Grand Total */
+        .grand-total {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            width: 136px;
+            height: 45px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn-back {
+            background: #3F6844;
+        }
+
+        .btn-remove {
+            background: #C30D13;
+        }
+
+        .btn-checkout {
+            background: #3F6844;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Table Styles */
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: #5DAA68; /* Set background color for the table */
+            border-radius: 20px; /* Set border-radius for rounded corners */
+            overflow: hidden; /* Hide overflow content to apply border-radius properly */
+            color: white; /* Set text color to white */
+        }
+
+        .cart-table th, .cart-table td {
+            border: none; /* Remove borders */
+            padding: 12px 8px;
+            text-align: left;
+        }
+
+        .cart-table th {
+            background-color: rgba(0, 0, 0, 0.1); /* Add subtle background to header */
+            font-weight: bold;
+            font-size: 16px; /* Make the font size bigger */
+        }
+
+        .cart-table img {
+            width: 80px; /* Increase image size */
+            height: 80px;
+            border-radius: 10px; /* Round image corners */
+            display: block; /* Ensure proper spacing */
+            margin: 0 auto; /* Center the image */
+        }
+
+        /* Select Box Styles */
+        .item-select {
+            transform: scale(1.5); /* Increase size */
+            margin: 0; /* Remove extra margins */
+            display: block; /* Ensure proper alignment */
+            margin: 0 auto; /* Center the checkbox */
+        }
+
+        .cart-item:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.05); /* Add subtle background to even rows */
+        }
+
+        /* Specific Styles */
+        .cart-table th:first-child,
+        .cart-table td:first-child {
+            width: 8%; /* Adjust width for Select column */
+            text-align: center;
+        }
+
+        .cart-table th:nth-child(2),
+        .cart-table td:nth-child(2) {
+            width: 15%; /* Adjust width for Image column */
+            text-align: center;
+        }
+
+        .cart-table th:nth-child(3),
+        .cart-table td:nth-child(3) {
+            width: 25%; /* Adjust width for Name column */
+        }
+
+        .cart-table th:nth-child(4),
+        .cart-table td:nth-child(4) {
+            width: 15%; /* Adjust width for Price column */
+        }
+
+        .cart-table th:nth-child(5),
+        .cart-table td:nth-child(5) {
+            width: 37%; /* Adjust width for Description column */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="navbar-links">
+            <a href="{{ url_for('buyer_dashboard') }}">HOME</a>
+            <a href="{{ url_for('buyer_cart') }}">CART</a>
+            <a href="{{ url_for('buyer_reviews') }}">REVIEWS</a>
+            <a href="{{ url_for('buyer_status') }}">STATUS</a>
+        </div>
+    </div>
+
+<!-- Page Content -->
+<div class="container">
+    <h1 class="title">CART</h1>
+
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr class="cart-item">
+                <td style="text-align: center;"><input type="checkbox" class="item-select" data-item-id="{{ item.id }}"></td>
+                <td><img src="{{ item.image }}" alt="{{ item.name }}"></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Grand Total -->
+    <div class="grand-total">GRAND TOTAL: RM <span id="grand-total">0.00</span></div>
+
+    <!-- Buttons -->
+    <div class="button-group">
+        <button class="btn btn-back" id="back-button">BACK</button>
+        <button class="btn btn-remove" id="remove-button">REMOVE</button>
+        <button class="btn btn-checkout" id="checkout-button">CHECKOUT</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartTable = document.querySelector('.cart-table tbody');
+        const grandTotalElement = document.getElementById('grand-total');
+        const removeButton = document.getElementById('remove-button');
+        const checkoutButton = document.getElementById('checkout-button');
+        const backButton = document.getElementById('back-button')
+
+        let cartData = [];
+        let selectedItems = [];
+
+        // Get cart data from Jinja2 rendered `cart-item`
+        const cartItemElements = document.querySelectorAll('.cart-item'); // Select all cart items
+
+        cartItemElements.forEach(item => {
+            const itemId = item.querySelector('.item-select').dataset.itemId;  // Assuming data-item-id attribute is used for the id
+            const itemName = item.querySelector('td:nth-child(3)').textContent;  // Get the name from the 3rd column
+            const itemPrice = item.querySelector('td:nth-child(4)').textContent;  // Get the price from the 4th column
+            const itemImage = item.querySelector('img').src;    // Get the image source from the img element
+
+            const itemData = {   // Create the data object
+                id: itemId,
+                name: itemName,
+                price: itemPrice,
+                image: itemImage,
+            };
+            cartData.push(itemData); // Add the item to your data array
+        });
+
+
+        // --- Handle Item Selection ---
+        cartTable.addEventListener('change', (event) => {
+            if (event.target.classList.contains('item-select')) {
+                const itemId = event.target.dataset.itemId;
+                const item = cartData.find(item => item.id == itemId); // Use == for type coercion
+
+                if (event.target.checked) {
+                    selectedItems.push(item);
+                } else {
+                    selectedItems = selectedItems.filter(item => item.id != itemId); // Use != for type coercion
+                }
+                updateGrandTotal();
+            }
+        });
+
+        // --- Update Grand Total ---
+        function updateGrandTotal() {
+            let total = 0;
+            selectedItems.forEach(item => {
+                // Extract the numeric price and parse as float
+                const priceString = item.price; // Assuming item.price is "RM 123.45"
+                const numericPrice = parseFloat(priceString.replace(/[^\d\.]/g, '')); // Remove "RM" and parse as float
+                total += numericPrice;
+
+            });
+
+            grandTotalElement.textContent = total.toFixed(2);
+        }
+
+         // --- Remove Selected Items from Cart ---
+        removeButton.addEventListener('click', async () => {
+            if (selectedItems.length === 0) {
+                alert("No items selected to remove.");
+                return;
+            }
+
+            // Collect IDs of selected items for removal
+            const itemIdsToRemove = selectedItems.map(item => item.id);
+
+            try {
+                // Iterate over the item IDs and send individual requests to remove each item
+                for (const itemId of itemIdsToRemove) {
+                    const response = await fetch(`/remove_from_cart/${itemId}`, {
+                        method: 'POST',
+                    });
+
+                    if (!response.ok) {
+                        console.error(`Failed to remove item with ID ${itemId}`);
+                        alert(`Failed to remove item with ID ${itemId}`);
+                        return;  // Exit the loop if one item fails to remove
+                    }
+                }
+
+                // If all removals are successful, clear the selected items and refresh the cart
+                selectedItems = [];  // Clear the selected items array
+                updateGrandTotal();   // Update the grand total display
+                window.location.reload();   // refresh the page
+
+                alert("Selected items removed successfully.");
+
+            } catch (error) {
+                console.error("Error removing items from cart:", error);
+                alert("Error removing items from cart.");
+            }
+        });
+
+
+        checkoutButton.addEventListener('click', async () => {
+            if (selectedItems.length === 0) {
+                alert("Please select items to checkout.");
+                return;
+            }
+
+            const deliveryAddress = prompt("Enter your delivery address:");
+            if (!deliveryAddress) {
+                alert("Delivery address is required.");
+                return;
+            }
+
+            try {
+                // Create a form to submit selected items and delivery address
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/checkout';
+
+                // Add delivery address as a hidden input
+                const addressInput = document.createElement('input');
+                addressInput.type = 'hidden';
+                addressInput.name = 'delivery_address';
+                addressInput.value = deliveryAddress;
+                form.appendChild(addressInput);
+
+                // Append the form to the document body
+                document.body.appendChild(form);
+
+                // Submit the form
+                form.submit();
+
+            } catch (error) {
+                console.error("Error during checkout:", error);
+                alert("Checkout failed");
+            }
+        });
+            backButton.addEventListener('click', () => {
+            window.history.back();  // Go back to the previous page
+        });
+    });
+</script>
+
+</body>
+</html>

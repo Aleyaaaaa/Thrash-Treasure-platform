@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reviews</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Kadwa', sans-serif;
+            background: #FAF1CF;
+            text-align: center;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #3F6844;
+            padding: 20px;
+            color: white;
+            transition: width 0.3s ease;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar.closed {
+            width: 60px;
+        }
+
+        .menu-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            margin: 0 auto 20px;
+        }
+
+        .menu-bar {
+            background: white;
+            height: 5px;
+            width: 30px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: 0.3s ease;
+        }
+
+        .sidebar.closed .menu-title,
+        .sidebar.closed .sidebar-links {
+            display: none;
+        }
+
+        .menu-title {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .sidebar-links {
+            margin-top: 50px;
+        }
+
+        .sidebar-links a {
+            display: block;
+            color: white;
+            font-size: 18px;
+            line-height: 2;
+            text-decoration: none;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .sidebar-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container for the Main Content */
+        .container {
+            margin-top: 120px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1200px;
+            margin: 80px auto;
+            background: #FAF1CF;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: margin-left 0.3s ease;
+            margin-left: 350px; /* Increased margin for more initial gap */
+            box-sizing: border-box;
+            display: flex;           /* Enable flexbox for centering */
+            justify-content: center; /* Center content horizontally */
+        }
+
+        /* Adjust container margin when sidebar is closed */
+        .container.sidebar-closed {
+             margin-left: 350px; /* Set a static margin-left when sidebar is closed */
+            margin-left: calc((100vw - 60px - 95%) / 2 + 60px); /* Center when closed */
+
+        }
+
+        /* Inner container to constrain content width */
+        .content-wrapper {
+            width: 100%;
+            max-width: 900px;     /* Limit content width and thus increase gap */
+        }
+
+        h1 {
+            color: black;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Refined Stats Boxes */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .stats-box {
+            background-color: #3F6844;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-title {
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stats-value {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bolder;
+        }
+
+        /* Order Table Styles - Refined */
+        .item-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #5DAA68;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .item-table th,
+        .item-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Headers */
+        .item-table th {
+            background-color: #3F6844;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
+        }
+
+        /* Center the table data */
+        .item-table td {
+            text-align: center;
+        }
+
+        /* Hover effect on rows */
+        .item-table tbody tr:hover {
+            background-color: #5DAA68;
+        }
+
+        /* Odd row color */
+        .item-table tbody tr:nth-child(odd) {
+            background-color: #5DAA68;
+        }
+
+        /* Responsive adjustments for table */
+        @media (max-width: 768px) {
+            .item-table {
+                border: 0;
+            }
+
+            .item-table thead {
+                display: none;
+            }
+
+            .item-table tr {
+                margin-bottom: 10px;
+                display: block;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .item-table td {
+                display: block;
+                text-align: right;
+                font-size: 0.9em;
+                border-bottom: 1px dotted #ccc;
+            }
+
+            .item-table td:last-child {
+                border-bottom: 0;
+            }
+
+            .item-table td::before {
+                content: attr(data-label);
+                float: left;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+        }
+
+        /* Style for the image */
+        .item-table img {
+            max-width: 80px;
+            height: auto;
+            display: block;
+            margin: auto;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style adjustments for ratings and reviews */
+        .rating {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 2em;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s;
+            padding: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Star Hover and Checked States */
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #ffc107;
+        }
+
+        /* Style adjustments for action button */
+        .action-buttons {
+            display: flex;
+            justify-content: center; /* Center the buttons */
+            gap: 10px; /* Space them out */
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Navbar will display using following implementation and styling when present for correct scope in form-->
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu-button" id="menuButton">
+            <div class="menu-bar"></div>
+            <div class="menu-bar"></div>
+            <div class="menu-bar"></div>
+        </div>
+        <div class="menu-title">MENU</div>
+        <!-- Sidebar Links -->
+        <div class="sidebar-links">
+            <a href="{{ url_for('admin_dashboard') }}">HOME</a> <!-- Added Home link -->
+            <a href="{{ url_for('seller_profile') }}">SELLER PROFILE</a>
+            <a href="{{ url_for('approval') }}">APPROVAL</a>
+            <a href="{{ url_for('orders') }}">ORDERS</a>
+            <a href="{{ url_for('reviews') }}">REVIEWS</a>
+            <!-- Sign Out Link -->
+            <form action="{{ url_for('sign_out') }}" method="POST" id="signOutForm">
+                <a href="#" onclick="confirmSignOut()">SIGN OUT</a>
+            </form>
+        </div>
+    </div>
+    <!-- Flash message will display using following implementation and styling when present for correct scope in form -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="hint {% if category=='error' %}error-message{% else %}success-message{% endif %}">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- Content Area -->
+    <div class="container" id="content">
+        <div class="content-wrapper">
+            <h1>All Reviews</h1>
+
+            <!-- Stats Boxes -->
+            <div class="stats-container">
+                <div class="stats-box">
+                    <h2 class="stats-title">Total Reviews</h2>
+                    <p class="stats-value">{{ total_reviews }}</p>
+                </div>
+                <div class="stats-box">
+                    <h2 class="stats-title">Average Rating</h2>
+                    <p class="stats-value">{{ "{:.2f}".format(average_rating) }}</p>
+                </div>
+            </div>
+
+            <table class="item-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Item Name</th>
+                        <th>Seller ID</th>
+                        <th>Item ID</th>
+                        <th>Feedback</th>
+                        <th>Rating</th>
+                        <th>Replies</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in all_reviews %}
+                    <tr>
+                        <td data-label="Image"><img src="{{ review.image }}" alt="{{ review.name }}"></td>
+                        <td data-label="Item Name">{{ review.name }}</td>
+                        <td data-label="Seller ID">{{ review.seller_id }}</td>
+                        <td data-label="Item ID">{{ review.id }}</td>
+                        <td data-label="Feedback">{{ review.review_text }}</td>
+                        <td data-label="Rating">{{ review.rating }} stars</td>
+                        <td data-label="Replies">{{ review.replies }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById("menuButton").addEventListener("click", function() {
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("content");
+
+        sidebar.classList.toggle("closed");
+        content.classList.toggle("sidebar-closed");
+    });
+
+    function confirmSignOut() {
+        if (confirm("Are you sure you want to sign out?")) {
+            document.getElementById('signOutForm').submit();
+        }
+    }
+    </script>
+
+</body>
+
+</html>

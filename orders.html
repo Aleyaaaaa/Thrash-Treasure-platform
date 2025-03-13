@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Kadwa', sans-serif;
+            background: #FAF1CF;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #3F6844;
+            padding: 20px;
+            color: white;
+            transition: width 0.3s ease;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar.closed {
+            width: 60px;
+        }
+
+        .menu-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            margin: 0 auto 20px;
+        }
+
+        .menu-bar {
+            background: white;
+            height: 5px;
+            width: 30px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: 0.3s ease;
+        }
+
+        .sidebar.closed .menu-title,
+        .sidebar.closed .sidebar-links {
+            display: none;
+        }
+
+        .menu-title {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .sidebar-links {
+            margin-top: 50px;
+            padding-right: 10px;
+        }
+
+        .sidebar-links a {
+            display: block;
+            color: white;
+            font-size: 18px;
+            line-height: 2;
+            text-decoration: none;
+            padding: 10px 0;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container for the Main Content */
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1200px;
+            margin: 80px auto;
+            transition: margin-left 0.3s ease; /* Removed width transition */
+            margin-left: 350px;  /* Increased margin for more gap */
+            box-sizing: border-box;
+            text-align: center;
+            display: flex; /* Added to center the content horizontally */
+            justify-content: center; /* Center content horizontally */
+        }
+
+        /* Adjust container margin when sidebar is closed */
+        .container.sidebar-closed {
+            margin-left: 80px; /* Set left margin when the sidebar is closed */
+        }
+
+        /* Inner content wrapper */
+        .content-wrapper {
+            width: 100%; /* Take full width of container */
+            max-width: 900px; /* Reduce max-width to create a wider gap */
+            display: inline-block; /* Allow the width to be applied correctly */
+        }
+
+        /* Order Table Styles */
+        .order-table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #5DAA68;
+            border-radius: 15px;
+            overflow: hidden;
+            color: white;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .order-table th,
+        .order-table td {
+            border: none;
+            padding: 12px 8px;
+            text-align: left;
+            font-size: inherit;
+        }
+
+        .order-table th {
+            background-color: #3F6844;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 15px 8px;
+            text-align: center;
+        }
+
+        /* Style table rows on hover */
+        .order-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Lighten background */
+            cursor: pointer; /* Indicate interactivity */
+        }
+
+        /* Center specific table data cells */
+        .order-table td:nth-child(1) { text-align: center; } /* Order ID */
+        .order-table td:nth-child(2) { text-align: center; } /* Buyer ID */
+        .order-table td:nth-child(3) { text-align: center; } /* Item Name */
+        .order-table td:nth-child(4) { text-align: center; } /* Item Price */
+        .order-table td:nth-child(5) { text-align: center; } /* Address */
+        .order-table td:nth-child(6) { text-align: center; } /* Status */
+
+        /* Stats Box Styles */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-box {
+            background: #3F6844;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            min-width: 150px;
+            height: 80px;
+            box-sizing: border-box;
+            flex-grow: 0;
+            margin: 5px 10px;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .stats-box h3 {
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        /* Responsive Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+             .container {
+                width: 95%; /* Wider container on smaller screens */
+                margin-left: 20px; /* Add more margin on small screens */
+              }
+
+              .container.sidebar-closed {
+                margin-left: 20px; /* Add same margin to small screen */
+              }
+
+              .order-table th,
+             .order-table td {
+                font-size: 0.8em; /* Further reduce font size */
+             }
+
+             .stats-container {
+                flex-direction: column; /* Stack the stats boxes */
+                align-items: center;
+             }
+
+             .stats-box {
+                width: 80%; /* Stats boxes take up more width */
+                height: auto;  /* Reset height to auto */
+                flex-grow: 1;  /* Allow them to grow again */
+                margin-bottom: 10px;
+                display: block; /* Reset display */
+                text-align: center; /* Restore default alignment */
+
+              }
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="menu-button" id="menuButton">
+        <div class="menu-bar"></div>
+        <div class="menu-bar"></div>
+        <div class="menu-bar"></div>
+    </div>
+    <div class="menu-title">MENU</div>
+     <!-- Sidebar Links -->
+     <div class="sidebar-links">
+        <a href="{{ url_for('admin_dashboard') }}">HOME</a>
+        <a href="{{ url_for('seller_profile') }}">SELLER PROFILE</a>
+        <a href="{{ url_for('approval') }}">APPROVAL</a>
+        <a href="{{ url_for('orders') }}">ORDERS</a>
+        <a href="{{ url_for('reviews') }}">REVIEWS</a>
+        <!-- Sign Out Link -->
+        <form action="{{ url_for('sign_out') }}" method="POST" id="signOutForm">
+            <a href="#" onclick="confirmSignOut()">SIGN OUT</a>
+        </form>
+    </div>
+</div>
+
+    <!-- Main Content -->
+    <div class="container" id="content">
+      <div class="content-wrapper">
+        <h1>Order Details</h1>
+
+        <!-- Stats Boxes -->
+        <div class="stats-container">
+            <div class="stats-box">
+                <h3>Total Orders</h3>
+                <p>{{ total_orders }}</p>
+            </div>
+            <div class="stats-box">
+                <h3>Orders Completed</h3>
+                <p>{{ orders_completed }}</p>
+            </div>
+        </div>
+
+        <!-- Order Table -->
+        <div class="table-responsive">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Buyer ID</th>
+                        <th>Item Name</th>
+                        <th>Item Price</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.get('id', 'N/A') }}</td>
+                        <td>{{ order.get('seller_id', 'N/A') }}</td>
+                        <td>{{ order.get('name', 'N/A') }}</td>
+                        <td>{{ order.get('price', 'N/A') }}</td>
+                        <td>{{ order.get('delivery_address', 'N/A') }}</td>
+                        <td>{{ order.get('status', 'N/A') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    document.getElementById("menuButton").addEventListener("click", function() {
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("content");
+
+        sidebar.classList.toggle("closed");
+        content.classList.toggle("sidebar-closed");
+    });
+
+    function confirmSignOut() {
+        if (confirm("Are you sure you want to sign out?")) {
+            document.getElementById('signOutForm').submit();
+        }
+    }
+</script>
+
+</body>
+</html>
